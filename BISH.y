@@ -37,9 +37,7 @@ import BISHTOKENS
 
 
 Program : IMPORT string  '.' string '|'               { File ($2 ++ "." ++ $4) }
-        | TAKE Equation '|'             { Take $2 }
-
-Equation : '[' List ']' WHERE Condition    { Where $2 $5 }
+        | TAKE '[' List ']' WHERE Condition '|'             { Take $3 $6 }
 
 Condition : '€' '[' List  ']' '.' Exp    { Exists $3 $6 }
           | Exp                          { Exp $1}
@@ -64,8 +62,7 @@ Data : string                             { String $1 }
 parseError :: [Token] -> a
 parseError _ = error "Parse error"
 
-data Program = File String | Take Equation deriving Show
-data Equation = Where [Data] Condition deriving Show
+data Program = File String | Take [Data] Condition deriving Show
 data Condition = Exists [Data] Exp | Exp Exp deriving Show
 data Reference = FRef String [Data] deriving Show
 data Exp = ColRef Reference | Conjoin Exp Exp | Equals Exp Exp | List [Data] | Info Data deriving Show

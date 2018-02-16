@@ -36,7 +36,7 @@ import BISHTOKENS
 
 
 
-Program : IMPORT string                 { File $2 }
+Program : IMPORT string  '.' string '|'               { File ($2 ++ "." ++ $4) }
         | TAKE Equation '|'             { Take $2 }
 
 Equation : '[' List ']' WHERE Condition    { Where $2 $5 }

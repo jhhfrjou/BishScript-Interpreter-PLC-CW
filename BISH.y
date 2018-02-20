@@ -39,33 +39,25 @@ import BISHTOKENS
 Program : IMPORT string  '.' string '|'               { File ($2 ++ "." ++ $4) }
         | TAKE '[' List ']' WHERE Condition '|'             { Take $3 $6 }
 
-Condition : '€' '[' List  ']' '.' Exp    { Exists $3 $6 }
-          | Exp                          { Exp $1}
+Condition : '€' '[' List  ']' '.' Condition    { Exists $3 $6 }
+                  | Var '=' Var                         { Equals $1 $3}
+                  | string '[' List ']'                      { Ref $1 $3 }
+                  | Condition '^' Condition  { Conjoin $1 $3 }
 
-Reference : string '[' List ']'          {FRef $1 $3 }
-
-Exp : Reference                           { ColRef $1 }
-    | Exp '^' Exp                         { Conjoin $1 $3 }
-    | Exp '=' Exp                         { Equals $1 $3 }
-    | '[' List ']'                        { List $2 }
-    | Data                                { Info $1}
-
-List :: { [Data] }
-List : Data                               { [$1] }
-     | Data ',' List                      { $1 : $3 }
+List :: { [Var] }
+List : Var                               { [$1] }
+     | Var ',' List                      { $1 : $3 }
      | {- empty -}                        { [] }
 
-Data : string                             { String $1 }
-     | int                                { Int $1 }
+Var : string                            { Var $1 }
+      | int                                { Int $1 }
 
 {
 parseError :: [Token] -> a
-parseError _ = error "Parse error"
+parseError _ =  error "Nothing"
 
-data Program = File String | Take [Data] Condition deriving Show
-data Condition = Exists [Data] Exp | Exp Exp deriving Show
-data Reference = FRef String [Data] deriving Show
-data Exp = ColRef Reference | Conjoin Exp Exp | Equals Exp Exp | List [Data] | Info Data deriving Show
-data Data = String String | Int Int deriving Show
+data Program = File String | Take [Var] Condition deriving Show
+data Condition = Exists [Var] Condition |  Conjoin Condition Condition | Equals Var Var | Ref String [Var] deriving Show
+data Var = Var String | Int Int deriving Show
 
 }

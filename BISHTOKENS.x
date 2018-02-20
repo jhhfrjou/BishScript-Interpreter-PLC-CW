@@ -23,6 +23,8 @@ $white+       ;
   \|         { \pos s -> MkToken pos TokenEndPipe}
   \=         { \pos s -> MkToken pos TokenEq}
   \.         { \pos s -> MkToken pos TokenDot}
+  \(         { \pos s -> MkToken pos TokenOpenBracket}
+  \)        { \pos s -> MkToken pos TokenCloseBracket}
 
   $alpha [$alpha $digit \_ \’]*   { \pos s -> MkToken pos (TokenString s)}
 {
@@ -42,7 +44,10 @@ data TokenThing =
   TokenEndList      |
   TokenComma        |
   TokenEndPipe      |
-  TokenDot
+  TokenDot |
+  TokenCloseBracket |
+  TokenOpenBracket
+
   deriving (Eq,Show)
 
 }

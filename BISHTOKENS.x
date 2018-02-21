@@ -14,6 +14,7 @@ $white+       ;
   take       { \pos s -> MkToken pos TokenTAKE }
   where      { \pos s -> MkToken pos TokenWHERE }
   import     { \pos s -> MkToken pos TokenIMPORT }
+  not        { \pos s -> MkToken pos TokenNOT }
   $digit+    { \pos s -> MkToken pos (TokenInt (read s)) }
   \^         { \pos s -> MkToken pos  TokenConjoin }
   \€         { \pos s -> MkToken pos TokenExists}
@@ -35,6 +36,7 @@ data TokenThing =
   TokenTAKE         |
   TokenWHERE        |
   TokenIMPORT       |
+  TokenNOT          |
   TokenInt Int      |
   TokenString String|
   TokenEq           |
@@ -48,6 +50,6 @@ data TokenThing =
   TokenCloseBracket |
   TokenOpenBracket
 
-  deriving (Eq,Show)
+  deriving (Eq,Show, Splitter)
 
 }

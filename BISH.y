@@ -11,6 +11,7 @@ import BISHTOKENS
     IMPORT { MkToken _ TokenIMPORT }
     TAKE { MkToken _ TokenTAKE }
     WHERE { MkToken _ TokenWHERE }
+    NOT {MkToken _ TokenNOT}
     int { MkToken _ (TokenInt $$) }
     string { MkToken _ (TokenString $$) }
     '€' { MkToken _ TokenExists }
@@ -25,30 +26,27 @@ import BISHTOKENS
     ')' {MkToken _ TokenCloseBracket}
 
 
+
 %right WHERE
 %left '€' '='
 %left '^'
-%right '['
-%left ']'
 %right '.'
-%right '['
-%left ']'
-%right '('
-%left ')'
-%right IMPORT
-%right TAKE
+%right '[' '('
+%left ']' ')'
+%right IMPORT TAKE NOT
 %%
 
 
 
 Program : IMPORT string  '.' string '|'               { File ($2 ++ "." ++ $4) }
-                | TAKE '[' List ']' WHERE Condition '|'             { Take $3 $6 }
+        | TAKE '[' List ']' WHERE Condition '|'             { Take $3 $6 }
 
 Condition : '€' '[' List  ']' '.' Condition    { Exists $3 $6 }
-                  | Var '=' Var                         { Equals $1 $3}
-                  | string '[' List ']'                    { Ref $1 $3 }
-                  | Condition '^' Condition  { Conjoin $1 $3 }
-                  |'(' Condition ')'                  { Brackets $2}
+          | Var '=' Var                         { Equals $1 $3}
+          | string '[' List ']'                    { Ref $1 $3 }
+          | Condition '^' Condition  { Conjoin $1 $3 }
+          |'(' Condition ')'                  { Brackets $2}
+          | NOT Condition                     { Not $2}
 
 List :: { [Var] }
 List : Var                               { [$1] }
@@ -56,14 +54,14 @@ List : Var                               { [$1] }
      | {- empty -}                        { [] }
 
 Var : string                            { Var $1 }
-      | int                                { Int $1 }
+    | int                                { Int $1 }
 
 {
 parseError :: [Token] -> a
 parseError _ =  error "Nothing"
 
 data Program = File String | Take [Var] Condition deriving Show
-data Condition = Exists [Var] Condition |  Conjoin Condition Condition | Equals Var Var | Ref String [Var] | Brackets Condition deriving Show
+data Condition = Exists [Var] Condition |  Conjoin Condition Condition | Equals Var Var | Ref String [Var] | Brackets Condition | Not Condition deriving Show
 data Var = Var String | Int Int deriving Show
 
 }

@@ -1,5 +1,5 @@
 {
-module BISHTOKENS where
+module Tokens where
 }
 
 %wrapper "posn"

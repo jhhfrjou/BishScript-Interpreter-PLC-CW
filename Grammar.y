@@ -1,6 +1,6 @@
 {
-module BISH where
-import BISHTOKENS
+module Grammar where
+import Tokens
 }
 
 %name parseBish

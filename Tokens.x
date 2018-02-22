@@ -50,6 +50,6 @@ data TokenThing =
   TokenCloseBracket |
   TokenOpenBracket
 
-  deriving (Eq,Show, Splitter)
+  deriving (Eq,Show)
 
 }

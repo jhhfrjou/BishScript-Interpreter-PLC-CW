@@ -1,4 +1,4 @@
-module Language where
+module Interpreter where
 import Tokens
 import Grammar
 import Data.List.Split

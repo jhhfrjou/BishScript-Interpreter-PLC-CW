@@ -3,28 +3,28 @@ module Grammar where
 import Tokens
 }
 
-%name parseBish
+%name parse
 %tokentype { Token }
 %error { parseError }
 
 %token
-    IMPORT { MkToken _ TokenIMPORT }
-    TAKE { MkToken _ TokenTAKE }
-    WHERE { MkToken _ TokenWHERE }
-    NOT {MkToken _ TokenNOT}
-    int { MkToken _ (TokenInt $$) }
-    string { MkToken _ (TokenString $$) }
-    '€' { MkToken _ TokenExists }
-    '.' { MkToken _ TokenDot }
-    '^' { MkToken _ TokenConjoin }
-    V { MkToken _ TokenDisjunction}
-    '=' { MkToken _ TokenEq }
-    '[' { MkToken _ TokenStartList }
-    ']' { MkToken _ TokenEndList }
-    ',' { MkToken _ TokenComma }
-    '|' { MkToken _ TokenEndPipe }
-    '(' {MkToken _ TokenOpenBracket}
-    ')' {MkToken _ TokenCloseBracket}
+    IMPORT { TokenImport _  }
+    TAKE { TokenTake _  }
+    WHERE { TokenWhere _  }
+    NOT {TokenNot _ }
+    int { TokenInt _ $$ }
+    string { TokenString _ $$ }
+    '€' { TokenExists _  }
+    '.' { TokenDot _  }
+    '^' { TokenConjoin _  }
+    V { TokenDisjunction _ }
+    '=' { TokenEq _  }
+    '[' { TokenStartList _  }
+    ']' { TokenEndList _  }
+    ',' { TokenComma _  }
+    '|' { TokenEndPipe _  }
+    '(' {TokenOpenBracket _ }
+    ')' {TokenCloseBracket _ }
 
 
 
@@ -64,6 +64,13 @@ parseError _ =  error "Nothing"
 
 data Program = File String | Take [Var] Condition deriving Show
 data Condition = Exists [Var] Condition |  Conjoin Condition Condition |  Disjunction Condition Condition | Equals Var Var | Ref String [Var] | Not Condition deriving Show
-data Var = Var String | Int Int deriving (Show Eq)
+data Var = Var String | Int Int deriving (Show)
+
+instance Eq Var where
+  x == y = m x y
+m :: Var -> Var -> Bool
+m (Var x) (Var y) = x == y
+m (Int a) (Int b) = a == b
+m _ _ = False
 
 }

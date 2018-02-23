@@ -18,7 +18,7 @@ resolve' _ _ = -1
 
 splitStatements [] [] = []
 splitStatements [] (x:xs) = []
-splitStatements (MkToken x TokenEndPipe:xs) a = parseBish (a ++ [MkToken x TokenEndPipe]):splitStatements xs []
+splitStatements ((TokenEndPipe x):xs) a = parse (a ++ [TokenEndPipe x]):splitStatements xs []
 splitStatements (x:xs) a = splitStatements xs (a ++ [x])
 
 interpret x = splitStatements (alexScanTokens x) []
@@ -32,11 +32,4 @@ freeVariables :: Condition -> [Var]
 freeVariables (Equals x1 x2) = x1:[x2]
 freeVariables (Conjoin x1 x2) = freeVariables x1 ++ freeVariables x2
 freeVariables (Not x) = freeVariables x
-freeVariables _ = []
-
-instance Eq Var where
-  x == y = m x y
-m :: Var -> Var -> Bool
-m (Var x) (Var y) = x == y
-m (Int a) (Int b) = a == b
-m _ _ = False
+freeVariables (Exists x1 x2) = x1

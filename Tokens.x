@@ -11,47 +11,45 @@ $alpha = [a-zA-Z]
 tokens :-
 $white+       ;
   "//".*       ;
-  take       { \pos s -> MkToken pos TokenTAKE }
-  where      { \pos s -> MkToken pos TokenWHERE }
-  import     { \pos s -> MkToken pos TokenIMPORT }
-  not        { \pos s -> MkToken pos TokenNOT }
-  "\/"      { \pos s -> MkToken pos TokenDisjunction }
-  $digit+    { \pos s -> MkToken pos (TokenInt (read s)) }
-  \^         { \pos s -> MkToken pos  TokenConjoin }
-  \€         { \pos s -> MkToken pos TokenExists}
-  \[         { \pos s -> MkToken pos TokenStartList}
-  \]         { \pos s -> MkToken pos TokenEndList}
-  \,         { \pos s -> MkToken pos TokenComma}
-  \|         { \pos s -> MkToken pos TokenEndPipe}
-  \=         { \pos s -> MkToken pos TokenEq}
-  \.         { \pos s -> MkToken pos TokenDot}
-  \(         { \pos s -> MkToken pos TokenOpenBracket}
-  \)        { \pos s -> MkToken pos TokenCloseBracket}
+  take       { \pos s -> TokenTake pos  }
+  where      { \pos s -> TokenWhere pos }
+  import     { \pos s -> TokenImport pos  }
+  not        { \pos s -> TokenNot pos  }
+  "\/"      { \pos s -> TokenDisjunction pos  }
+  $digit+    { \pos s -> TokenInt pos (read s) }
+  \^         { \pos s -> TokenConjoin pos   }
+  \€         { \pos s -> TokenExists pos }
+  \[         { \pos s -> TokenStartList pos }
+  \]         { \pos s -> TokenEndList pos }
+  \,         { \pos s -> TokenComma pos }
+  \|         { \pos s -> TokenEndPipe pos }
+  \=         { \pos s -> TokenEq pos }
+  \.         { \pos s -> TokenDot pos }
+  \(         { \pos s -> TokenOpenBracket pos }
+  \)        { \pos s -> TokenCloseBracket pos }
 
-  $alpha [$alpha $digit \_ \’]*   { \pos s -> MkToken pos (TokenString s)}
+  $alpha [$alpha $digit \_ \’]*   { \pos s -> TokenString pos s}
+
 {
-data Token = MkToken AlexPosn TokenThing deriving (Show, Eq)
--- Each action has type :: String -> Token
--- The token type:
-data TokenThing =
-  TokenTAKE         |
-  TokenWHERE        |
-  TokenIMPORT       |
-  TokenNOT          |
-  TokenDisjunction  |
-  TokenInt Int      |
-  TokenString String|
-  TokenEq           |
-  TokenConjoin      |
-  TokenExists       |
-  TokenStartList    |
-  TokenEndList      |
-  TokenComma        |
-  TokenEndPipe      |
-  TokenDot |
-  TokenCloseBracket |
-  TokenOpenBracket
 
+data Token =
+  TokenTake AlexPosn   |
+  TokenWhere AlexPosn       |
+  TokenImport AlexPosn      |
+  TokenNot AlexPosn         |
+  TokenDisjunction AlexPosn  |
+  TokenInt AlexPosn Int   |
+  TokenString AlexPosn String |
+  TokenEq AlexPosn          |
+  TokenConjoin AlexPosn     |
+  TokenExists AlexPosn      |
+  TokenStartList AlexPosn   |
+  TokenEndList AlexPosn     |
+  TokenComma AlexPosn        |
+  TokenEndPipe AlexPosn      |
+  TokenDot AlexPosn |
+  TokenCloseBracket AlexPosn|
+  TokenOpenBracket AlexPosn
   deriving (Eq,Show)
 
 }

@@ -17,6 +17,7 @@ import Tokens
     '€' { MkToken _ TokenExists }
     '.' { MkToken _ TokenDot }
     '^' { MkToken _ TokenConjoin }
+    V { MkToken _ TokenDisjunction}
     '=' { MkToken _ TokenEq }
     '[' { MkToken _ TokenStartList }
     ']' { MkToken _ TokenEndList }
@@ -29,7 +30,7 @@ import Tokens
 
 %right WHERE
 %left '€' '='
-%left '^'
+%left '^' V
 %right '.'
 %right '[' '('
 %left ']' ')'
@@ -42,11 +43,12 @@ Program : IMPORT string  '.' string '|'               { File ($2 ++ "." ++ $4) }
         | TAKE '[' List ']' WHERE Condition '|'             { Take $3 $6 }
 
 Condition : '€' '[' List  ']' '.' Condition    { Exists $3 $6 }
-          | Var '=' Var                         { Equals $1 $3}
-          | string '[' List ']'                    { Ref $1 $3 }
-          | Condition '^' Condition  { Conjoin $1 $3 }
-          |'(' Condition ')'                  { Brackets $2}
-          | NOT Condition                     { Not $2}
+          | Var '=' Var                        { Equals $1 $3}
+          | string '[' List ']'                { Ref $1 $3 }
+          | Condition '^' Condition            { Conjoin $1 $3 }
+          | Condition V Condition              { Disjunction $1 $3 }
+          |'(' Condition ')'                   { $2}
+          | NOT Condition                      { Not $2}
 
 List :: { [Var] }
 List : Var                               { [$1] }
@@ -61,7 +63,7 @@ parseError :: [Token] -> a
 parseError _ =  error "Nothing"
 
 data Program = File String | Take [Var] Condition deriving Show
-data Condition = Exists [Var] Condition |  Conjoin Condition Condition | Equals Var Var | Ref String [Var] | Brackets Condition | Not Condition deriving Show
-data Var = Var String | Int Int deriving Show
+data Condition = Exists [Var] Condition |  Conjoin Condition Condition |  Disjunction Condition Condition | Equals Var Var | Ref String [Var] | Not Condition deriving Show
+data Var = Var String | Int Int deriving (Show Eq)
 
 }

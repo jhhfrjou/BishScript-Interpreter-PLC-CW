@@ -15,6 +15,7 @@ $white+       ;
   where      { \pos s -> MkToken pos TokenWHERE }
   import     { \pos s -> MkToken pos TokenIMPORT }
   not        { \pos s -> MkToken pos TokenNOT }
+  "\/"      { \pos s -> MkToken pos TokenDisjunction }
   $digit+    { \pos s -> MkToken pos (TokenInt (read s)) }
   \^         { \pos s -> MkToken pos  TokenConjoin }
   \€         { \pos s -> MkToken pos TokenExists}
@@ -37,6 +38,7 @@ data TokenThing =
   TokenWHERE        |
   TokenIMPORT       |
   TokenNOT          |
+  TokenDisjunction  |
   TokenInt Int      |
   TokenString String|
   TokenEq           |

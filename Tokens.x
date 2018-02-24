@@ -6,6 +6,7 @@ module Tokens where
 $digit = 0-9
 -- digits
 $alpha = [a-zA-Z]
+$fileName = [A-Z]
 -- alphabetic characters
 
 tokens :-

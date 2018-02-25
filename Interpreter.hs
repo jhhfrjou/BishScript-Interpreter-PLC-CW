@@ -4,8 +4,8 @@ import Grammar
 import Data.List.Split
 import Data.List
 import System.IO
-import Data.Csv
 --Calc from a file
+main x = (>>=) (interpretFromFile x) resolve1
 
 full x = (>>=) (fmap head (interpretFromFile x)) resolve
 
@@ -28,18 +28,23 @@ splitLines = fmap (splitOn "\n")
 splitCommas = fmap $ map $ splitOn ","
 getCSV x = splitCommas $ splitLines $ readFile x
 
-
-multipleForNow x y = fmap (:y) (resolve x)
 --Returns the result
 resolve :: Program -> IO [[String]]
 resolve (File x y) = getCSV x
-resolve (Take x e) | valid x e = resolver x e
-                   | otherwise = return [["Statement Not Valid"]]
+resolve (Take x e) | valid x (freeVariables e []) = resolver' x e []
+                               | otherwise = return [["Statement Not Valid"]]
 
-resolver' :: [Program] -> [(String, IO [[String]])] -> IO [[String]]
-resolver' [] variables = getCSV "testing.csv"
-resolver' (File x y:xs) variables = resolver' xs ((y,getCSV x):variables)
-resolver' _ _ = getCSV "testing.csv"
+resolve1 :: [Program] -> IO [[String]]
+resolve1 x = resolver x []
+
+resolver :: [Program] -> [(String, IO [[String]])] -> IO [[String]]
+resolver [] variables = return [["No Statement"]]
+resolver ((File x y):xs) variables = resolver xs ((y,getCSV x):variables)
+resolver ((Take x y):xs) variables | valid x (freeVariables y []) = resolver' x y variables
+                                                       | otherwise = return [["Statement Not Valid"]]
+
+resolver' (x:xs) (Ref name list) variables = findCSV name variables
+resolver' _ _ _ = return [["TODO"]]
 
 returnAllVariables ::  [(String, IO [[String]])] -> IO [[String]]
 returnAllVariables [] = return []
@@ -51,12 +56,11 @@ findCSV variable (x:xs) | fst x == variable = snd x
                         | otherwise = findCSV variable xs
 --TODO Method to solve the expression
 
-resolver x e = return [["TODO"]]
+
 
 --Checks if the Takes are free in the condition
-valid :: [Var] -> Condition -> Bool
-valid x y = all (inList $ freeVariables y []) x
-
+valid :: [Var] -> [Var] -> Bool
+valid x y = all (inList y) x && all (inList x) y
 --Returns true if in a list
 inList :: [Var] -> Var -> Bool
 inList [] _ = False

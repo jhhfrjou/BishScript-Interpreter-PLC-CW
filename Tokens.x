@@ -14,9 +14,10 @@ $white+       ;
   "//".*       ;
   take       { \pos s -> TokenTake pos  }
   where      { \pos s -> TokenWhere pos }
-  import     { \pos s -> TokenImport pos  }
+  import     { \pos s -> TokenImport pos }
+  as         { \pos s -> TokenAs pos }
   not        { \pos s -> TokenNot pos  }
-  "\/"      { \pos s -> TokenDisjunction pos  }
+  "\/"       { \pos s -> TokenDisjunction pos  }
   $digit+    { \pos s -> TokenInt pos (read s) }
   \^         { \pos s -> TokenConjoin pos   }
   \€         { \pos s -> TokenExists pos }
@@ -27,9 +28,10 @@ $white+       ;
   \=         { \pos s -> TokenEq pos }
   \.         { \pos s -> TokenDot pos }
   \(         { \pos s -> TokenOpenBracket pos }
-  \)        { \pos s -> TokenCloseBracket pos }
+  \)         { \pos s -> TokenCloseBracket pos }
 
-  $alpha [$alpha $digit \_ \’]*   { \pos s -> TokenString pos s}
+  $fileName [$alpha $digit \_ \’]*   { \pos s -> TokenFileName pos s}
+  $alpha [$alpha $digit \_ \’]*      { \pos s -> TokenString pos s}
 
 {
 
@@ -37,10 +39,12 @@ data Token =
   TokenTake AlexPosn   |
   TokenWhere AlexPosn       |
   TokenImport AlexPosn      |
+  TokenAs AlexPosn          |
   TokenNot AlexPosn         |
   TokenDisjunction AlexPosn  |
   TokenInt AlexPosn Int   |
   TokenString AlexPosn String |
+  TokenFileName AlexPosn String |
   TokenEq AlexPosn          |
   TokenConjoin AlexPosn     |
   TokenExists AlexPosn      |

@@ -4,10 +4,10 @@ import Grammar
 import Data.List.Split
 import Data.List
 import System.IO
-
+import Data.Csv
 --Calc from a file
 
-main x = (>>=) (fmap head (interpretFromFile x)) resolve
+full x = (>>=) (fmap head (interpretFromFile x)) resolve
 
 --Reads file Returns AST
 
@@ -29,13 +29,28 @@ splitCommas = fmap $ map $ splitOn ","
 getCSV x = splitCommas $ splitLines $ readFile x
 
 
-
+multipleForNow x y = fmap (:y) (resolve x)
 --Returns the result
-resolve (File x) = getCSV x
+resolve :: Program -> IO [[String]]
+resolve (File x y) = getCSV x
 resolve (Take x e) | valid x e = resolver x e
-                            | otherwise = return [["Statement Not Valid"]]
+                   | otherwise = return [["Statement Not Valid"]]
 
+resolver' :: [Program] -> [(String, IO [[String]])] -> IO [[String]]
+resolver' [] variables = getCSV "testing.csv"
+resolver' (File x y:xs) variables = resolver' xs ((y,getCSV x):variables)
+resolver' _ _ = getCSV "testing.csv"
+
+returnAllVariables ::  [(String, IO [[String]])] -> IO [[String]]
+returnAllVariables [] = return []
+returnAllVariables (x:xs) = snd x
+
+findCSV :: String -> [(String, IO [[String]])] -> IO [[String]]
+findCSV variable [] = return [["No Variable Found"]]
+findCSV variable (x:xs) | fst x == variable = snd x
+                        | otherwise = findCSV variable xs
 --TODO Method to solve the expression
+
 resolver x e = return [["TODO"]]
 
 --Checks if the Takes are free in the condition

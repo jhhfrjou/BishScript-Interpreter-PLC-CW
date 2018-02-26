@@ -1,5 +1,5 @@
 Interpreter: Tokens.hs Grammar.hs Interpreter.hs
-						 ghci Interpreter.hs
+						 ghc -o Interpreter Interpreter.hs
 Tokens.hs: Tokens.x
 					 alex Tokens.x
 

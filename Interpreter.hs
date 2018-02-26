@@ -1,13 +1,17 @@
-module Interpreter where
+module Main where
 import Tokens
 import Grammar
 import Data.List.Split
 import Data.List
 import System.IO
+import System.Environment
 --Calc from a file
-main x = (>>=) (interpretFromFile x) resolve1
 
-full x = (>>=) (fmap head (interpretFromFile x)) resolve
+main = (>>=) (main1 getArgs) print
+
+main1  x = (>>=) (fmap head x) eval
+
+eval x = (>>=) (interpretFromFile x) resolve
 
 --Reads file Returns AST
 
@@ -18,24 +22,22 @@ interpretFromFile x = fmap interpret (readFile x)
 interpret x = splitStatements (alexScanTokens x) []
 
 --Splitting File into multiple statements to evaluate
+splitStatements :: [Token] -> [Token] -> [Program]
 splitStatements [] [] = []
 splitStatements [] (x:xs) = []
 splitStatements (TokenEndPipe x:xs) a = parse (a ++ [TokenEndPipe x]):splitStatements xs []
 splitStatements (x:xs) a = splitStatements xs (a ++ [x])
 
 --CSV Reading
+splitLines :: IO String -> IO [String]
 splitLines = fmap (splitOn "\n")
+
+splitCommas :: IO [String] -> IO [[String]]
 splitCommas = fmap $ map $ splitOn ","
 getCSV x = splitCommas $ splitLines $ readFile x
 
---Returns the result
-resolve :: Program -> IO [[String]]
-resolve (File x y) = getCSV x
-resolve (Take x e) | valid x (freeVariables e []) = resolver' x e []
-                               | otherwise = return [["Statement Not Valid"]]
-
-resolve1 :: [Program] -> IO [[String]]
-resolve1 x = resolver x []
+resolve :: [Program] -> IO [[String]]
+resolve x = resolver x []
 
 resolver :: [Program] -> [(String, IO [[String]])] -> IO [[String]]
 resolver [] variables = return [["No Statement"]]
@@ -53,7 +55,7 @@ returnAllVariables (x:xs) = snd x
 findCSV :: String -> [(String, IO [[String]])] -> IO [[String]]
 findCSV variable [] = return [["No Variable Found"]]
 findCSV variable (x:xs) | fst x == variable = snd x
-                        | otherwise = findCSV variable xs
+                                       | otherwise = findCSV variable xs
 --TODO Method to solve the expression
 
 

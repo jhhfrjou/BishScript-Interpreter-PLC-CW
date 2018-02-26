@@ -16,7 +16,7 @@ import Tokens
     int { TokenInt _ $$ }
     string { TokenString _ $$ }
     fileName { TokenFileName _ $$ }
-    '€' { TokenExists _  }
+    EXISTS { TokenExists _  }
     '.' { TokenDot _  }
     '^' { TokenConjoin _  }
     V { TokenDisjunction _ }
@@ -31,7 +31,7 @@ import Tokens
 
 
 %right WHERE
-%left '€' '='
+%left 'EXISTS' '='
 %left '^' V
 %right '.'
 %right '[' '('
@@ -44,7 +44,7 @@ import Tokens
 Program : IMPORT string  '.' string AS fileName '|'               { File ($2 ++ "." ++ $4) $6 }
         | TAKE '[' List ']' WHERE Condition '|'             { Take $3 $6 }
 
-Condition : '€' '[' List  ']' '.' Condition    { Exists $3 $6 }
+Condition : EXISTS '[' List  ']' '.' Condition    { Exists $3 $6 }
           | Var '=' Var                        { Equals $1 $3}
           | fileName '[' List ']'              { Ref $1 $3 }
           | Condition '^' Condition            { Conjoin $1 $3 }

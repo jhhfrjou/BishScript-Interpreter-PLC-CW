@@ -20,7 +20,7 @@ $white+       ;
   "\/"       { \pos s -> TokenDisjunction pos  }
   $digit+    { \pos s -> TokenInt pos (read s) }
   \^         { \pos s -> TokenConjoin pos   }
-  \€         { \pos s -> TokenExists pos }
+  exists         { \pos s -> TokenExists pos }
   \[         { \pos s -> TokenStartList pos }
   \]         { \pos s -> TokenEndList pos }
   \,         { \pos s -> TokenComma pos }

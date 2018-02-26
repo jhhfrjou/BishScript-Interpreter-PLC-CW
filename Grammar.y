@@ -29,20 +29,21 @@ import Tokens
     ')' {TokenCloseBracket _ }
 
 
-
+%left EXISTS '=' '.'
+%right '^' V
 %right WHERE
-%left 'EXISTS' '='
-%left '^' V
-%right '.'
 %right '[' '('
 %left ']' ')'
-%right IMPORT TAKE NOT
+%nonassoc IMPORT TAKE NOT
 %%
 
 
 
-Program : IMPORT string  '.' string AS fileName '|'               { File ($2 ++ "." ++ $4) $6 }
-        | TAKE '[' List ']' WHERE Condition '|'             { Take $3 $6 }
+Program : IMPORT fileName  '.' string AS fileName '|'               { File ($2 ++ "." ++ $4) $6 }
+                | IMPORT string  '.' string AS fileName '|'                    { File ($2 ++ "." ++ $4) $6 }
+                | IMPORT fileName  '.' string '|'                                   { File ($2 ++ "." ++ $4) $2 }
+                | IMPORT string  '.' string '|'                                          { File ($2 ++ "." ++ $4) $2 }
+                | TAKE '[' List ']' WHERE Condition '|'             { Take $3 $6 }
 
 Condition : EXISTS '[' List  ']' '.' Condition    { Exists $3 $6 }
           | Var '=' Var                        { Equals $1 $3}
@@ -64,10 +65,9 @@ Var : string                            { Var $1 }
 parseError :: [Token] -> a
 parseError _ =  error "Nothing"
 
-data Program = File String String | Take [Var] Condition deriving Show
-data Condition = Exists [Var] Condition |  Conjoin Condition Condition |  Disjunction Condition Condition | Equals Var Var | Ref String [Var] | Not Condition deriving Show
-data Var = Var String | Int Int deriving (Show)
-
+data Program = File String String | Take [Var] Condition deriving (Show, Read)
+data Condition = Exists [Var] Condition |  Conjoin Condition Condition |  Disjunction Condition Condition | Equals Var Var | Ref String [Var] | Not Condition deriving (Show, Read)
+data Var = Var String | Int Int deriving (Show, Read)
 instance Eq Var where
   x == y = m x y
 m :: Var -> Var -> Bool

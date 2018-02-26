@@ -40,10 +40,9 @@ import Tokens
 
 
 Program : IMPORT fileName  '.' string AS fileName '|'               { File ($2 ++ "." ++ $4) $6 }
-                | IMPORT string  '.' string AS fileName '|'                    { File ($2 ++ "." ++ $4) $6 }
-                | IMPORT fileName  '.' string '|'                                   { File ($2 ++ "." ++ $4) $2 }
-                | IMPORT string  '.' string '|'                                          { File ($2 ++ "." ++ $4) $2 }
-                | TAKE '[' List ']' WHERE Condition '|'             { Take $3 $6 }
+        | IMPORT string  '.' string AS fileName '|'                    { File ($2 ++ "." ++ $4) $6 }
+        | IMPORT fileName  '.' string '|'                                   { File ($2 ++ "." ++ $4) $2 }
+        | TAKE '[' List ']' WHERE Condition '|'             { Take $3 $6 }
 
 Condition : EXISTS '[' List  ']' '.' Condition    { Exists $3 $6 }
           | Var '=' Var                        { Equals $1 $3}

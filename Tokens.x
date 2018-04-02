@@ -16,15 +16,13 @@ $white+       ;
   where      { \pos s -> TokenWhere pos }
   import     { \pos s -> TokenImport pos }
   as         { \pos s -> TokenAs pos }
-  not        { \pos s -> TokenNot pos  }
-  "\/"       { \pos s -> TokenDisjunction pos  }
-  $digit+    { \pos s -> TokenInt pos (read s) }
   \^         { \pos s -> TokenConjoin pos   }
   exists         { \pos s -> TokenExists pos }
   \[         { \pos s -> TokenStartList pos }
   \]         { \pos s -> TokenEndList pos }
   \,         { \pos s -> TokenComma pos }
   \|         { \pos s -> TokenEndPipe pos }
+  "!="       { \pos s -> TokenNotEq pos }
   \=         { \pos s -> TokenEq pos }
   \.         { \pos s -> TokenDot pos }
   \(         { \pos s -> TokenOpenBracket pos }
@@ -40,11 +38,9 @@ data Token =
   TokenWhere AlexPosn       |
   TokenImport AlexPosn      |
   TokenAs AlexPosn          |
-  TokenNot AlexPosn         |
-  TokenDisjunction AlexPosn  |
-  TokenInt AlexPosn Int   |
   TokenString AlexPosn String |
   TokenFileName AlexPosn String |
+  TokenNotEq AlexPosn      |
   TokenEq AlexPosn          |
   TokenConjoin AlexPosn     |
   TokenExists AlexPosn      |

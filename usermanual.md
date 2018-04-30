@@ -21,7 +21,7 @@ CSV files are imported using the ‘import’ keyword followed by the filename t
 
 `import explained.csv as e|` is not valid
 
-If you like cutting corners and are going to use CSV files that starts with a capital letter you can omit the as part and use the initial file name to refer to that file inside of the statement.
+To make things easier, CSV files that starts with a capital letter can use the initial file name to refer to that file inside of the statement.
 
 `import Example.csv |`  is valid and the file will be referred to as Example in the condition.
 
@@ -29,7 +29,6 @@ If you like cutting corners and are going to use CSV files that starts with a ca
 
 ### Queries
 Queries are the heart of the language and is where the actual stuff takes place.
-
 These are broken down into two parts. The take and the where, which is explained below 
 
 #### Take
@@ -72,7 +71,7 @@ take [x] where R[x] ^ S[x] |
 
 ##### Existential Quantification.
 
-The existential quantifier is a way of introducing bound variables, By introducing a bound variable it allows you to check for a property, or just not have a certain column printed at the end. To do this you use the keyword `exists`, then a list of variables you want to initialise a `.` then the condition.
+The existential quantifier is a way of introducing bound variables. By introducing a bound variable it allows you to check for a property, or just not have a certain column printed at the end. To do this you use the keyword `exists`, then a list of variables you want to initialise a `.` then the condition.
 ```
 take  [x] where exists [y,z] . FileName[x,y,z] | 
 ```

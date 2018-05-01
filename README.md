@@ -56,7 +56,7 @@ In addition to this, when using the same variable twice in the same reference, i
 take [x] where FileName[x,x] |
 ```
 
-Without at least one of these bad boys in the query, the script is useless, since the variables are not assigned to a column and will result in an error. See Errors.
+Without at least one of these in the query, the script is useless, since the variables are not assigned to a column and will result in an error. See Errors.
 
 ##### Conjoins
 
@@ -75,7 +75,7 @@ The existential quantifier is a way of introducing bound variables. By introduci
 ```
 take  [x] where exists [y,z] . FileName[x,y,z] | 
 ```
-The condition of the existential quantifier means the first two statements are equal while the second one is not
+The condition of the existential, quantifier means the first two statements are equal while the second one is not
 ```
 take [x] where exists [y] . File [x,y] ^ File2 [x] | 
 take [x] where exists [y] . (File [x,y] ^ File2 [x]) |

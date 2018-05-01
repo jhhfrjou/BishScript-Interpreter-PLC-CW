@@ -75,6 +75,21 @@ The existential quantifier is a way of introducing bound variables. By introduci
 ```
 take  [x] where exists [y,z] . FileName[x,y,z] | 
 ```
+The condition of the existential quantifier means the first two statements are equal while the second one is not
+```
+take [x] where exists [y] . File [x,y] ^ File2 [x] | 
+take [x] where exists [y] . (File [x,y] ^ File2 [x]) |
+take [x] where (exists [y] . File [x,y]) ^ File2 [x] |
+```
+
+
+With multiple exists statements ensure the introduced variable have unique names between each statements 
+```
+take [x] where (exists [y] . File[x,y]) ^ (exists [y] . File [y,x]) | // will return an incorrect answer
+take [x] where (exists [y] . File[x,y]) ^ (exists [z] . File [z,x]) | // will return the correct answer
+```
+
+Because of the precedence, we have added brackets to our language. When there are multiple `exists` statements in a query, it is useful to enclose each `exists` statements in brackets to avoid ambiguity.
 
 ##### Equals
 
